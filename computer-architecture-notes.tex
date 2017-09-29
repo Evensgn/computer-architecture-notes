@@ -73,25 +73,105 @@
 \newpage
 
 \section{Pipelining}
+
   \subsection{Introduction of Pipelining}
+
+    \indent 
+
     \emph{Pipelining} is an implementation technique whereby multiple instructions are overlapped in execution; it takes advantage of parallelism that exists among the actions needed to execute an instruction.\cite{caqa}
+
     \subsubsection{Laundry Example}
+      \indent 
+
       Suppose we have many loads of clothes to wash, dry and fold. 
+
       \begin{itemize}
         \item Each step (washing, drying and folding) is called a \emph{pipe stage} or a \emph{pipe segment}. 
         \item \emph{Latency} is the total time spent on a single task, which is not improved by pipelining.Unbalanced lengths of pipe stages reduces speedup. 
         \item \emph{Throughput} is defined as the number of loads of clothes per minute. It shows how often a load of clothes exits the pipeline.
-        \item The time required between moving an instruction one step down the pipeline is a \emph{processor cycle}. In a computer, this processor cycle is usually 1 clock cycle.
+        \item The time required between moving an instruction one step down the pipeline is a \emph{processor cycle}. In a computer, this processor cycle is usually 1 clock cycle.\cite{caqa}
       \end{itemize}
+
     \subsubsection{Speedup from Pipelining}
+
+      \indent 
+
+      Throughput is what matters.
+
       \begin{itemize}
         \item Unbalanced lengths of pipe stages reduces speedup. 
         \item Handover time between pipe stages reduces speedup.
       \end{itemize}
+
       To improve the efficiency of a pipeline, one should balance the length of each pipeline stage. If the stages are perfectly balanced, then the time per instruction on the pipeline processor is equal to (under ideal conditions) 
-      $$\frac{\text{Time per instruction on unpipelined machine}}{\text{Number of pipe stages}}$$
-      and the throughput of the pipeline is equal to
+      $$\frac{\text{Time per instruction on unpipelined machine}}{\text{Number of pipe stages}}$$ 
+      and the throughput of the pipeline is equal to 
       $$\text{Number of pipe stages} \times \text{Throughput on unpipelined machine}$$
+
+  \subsection{The Basics of a RISC Instruction Set}
+
+    \subsubsection{Introduction of RISC}
+
+      \indent 
+
+      A RISC\footnote{reduced instruction set computer} is a computer whose instruction set architecture that has lower \emph{cycles per instruction} (CPI) than a CISC\footnote{complex instruction set computer}.
+
+      MIPS is a RISC instruction set architecture.
+
+      \paragraph{Key Properties of RISC Architectures\cite{caqa}}
+        \begin{itemize}
+          \item All operations on data apply to data in registers and typically change the entire register (32 or 64 bits per register).
+          \item Only load and store operations can affect memory. Load and store operations that load or store less than a full register are often available.
+          \item The instruction formats are few in number, with all instructions typically being one size.
+        \end{itemize}
+
+      These properties make the implementation of pipelining simple.
+
+      Most RISC architectures like MIPS have three classes of instructions:
+      \begin{enumerate}
+        \item ALU\footnote{Arithmetic logic unit} instructions 
+        \item Load and store instructions
+        \item Branches and jumps
+      \end{enumerate}
+
+    \subsubsection{Implementation of a RISC Instruction Set}
+
+      \indent
+
+      The implementation here will focus only on a pipeline for an integer subsetof a RISC architecture that consists of load-store word, branch, and integer ALU operations.
+
+      \paragraph{Implementation Without Pipelining\cite{caqa}} 
+        Every instruction in the RISC subset can be implemented in at most 5 clock cycles as follows:
+        \begin{enumerate}
+          \item \emph{Instruction fetch cycle} (IF):
+
+          Send the program counter (PC) to memory and fetch the current instruction from memory. Update the PC to the next sequential PC by adding 4 (since each instruction is 4 bytes) to the PC.
+
+          \item \emph{Instruction decode / register fetch cycle} (ID):
+
+          Decode the instruction and read the registers corresponding to register source specifiers from the register file. Do the equality test on the registers as they are read, for a possible branch. Sign-extend (introduced later) the offset field of the instruction in case it is needed. Compute the possible branch target address by adding the sign-extended offset to the incremented PC.
+
+          Decoding is done in parallel with reading registers, which is possible because the register specifiers are at a fixed location in a RISC instruction. This technique is known as \emph{fixed-field decoding}. It may read a register that we don't use, and it doesn't help but also doesn't hurt performance.
+
+          \item \emph{Execution / effective address cycle} (EX):
+
+          The ALU operates on the operands prepared in the prior cycle, performing one of three functions depending on the instruction type.
+          \begin{itemize}
+            \item Memory reference --- The ALU adds the base register and the offset to form the effective address.
+            \item Register-Register ALU instruction --- The ALU performs the operation specified by the ALU opcode on the values read from the register file.
+            \item Register-Immediate ALU instruction --- The ALU performs the operation specified by the ALU opcode on the first value read from the register file and the sign-extended immediate.
+          \end{itemize}
+
+          In a load-store architecture the effective address and execution cycles can be combined into a single clock cycle, since no instruction needs to do both of them.
+        \end{enumerate}
+
+      \paragraph{Sign Extension} In computer arithmetic, sigh extension is the operation of increasing the number of bits of a binary number while preserving the number's sign and value. This is done by appending digits (same as the sign bit) to the most significant side of the number, following a procedure dependent on the particular signed number representation used.
+      
+      For example:
+        \begin{itemize}
+          \item ``00 1010'' (decimal positive 10) $\rightarrow$ ``0000 0000 0000 1010''
+          \item ``11 1111 0001'' (decimal negative 15) $\rightarrow$ ``1111 1111 1111 0001''
+        \end{itemize}
 
 
 \begin{thebibliography}{9}
