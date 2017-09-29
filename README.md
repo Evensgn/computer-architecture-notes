@@ -1,2 +1,5 @@
 # computer-architecture-notes
-Lecture notes of computer architecture, ACM Class, SJTU.
+Zhou Fan (@Evensgn)
+This is my lecture notes of computer architecture course, ACM Class, Shanghai Jiao Tong University.
+
+CC BY-NC-SA
