@@ -1,6 +1,7 @@
 \documentclass[12pt, a4paper]{article}
 % \usepackage{ctex}
 
+\usepackage{float}
 \usepackage[super, square]{natbib}
 \usepackage[margin = 1in]{geometry}
 \usepackage{
@@ -145,7 +146,7 @@
         \begin{enumerate}
           \item \emph{Instruction fetch cycle} (IF):
 
-          Send the program counter (PC) to memory and fetch the current instruction from memory. Update the PC to the next sequential PC by adding 4 (since each instruction is 4 bytes) to the PC.
+          Send the program counter (PC) to memory and fetch the current instruction from memory. Update the PC to the next sequential PC by adding 4 (since each instruction is 4 bytes) to the PC\footnote{program counter, indicates where a computer is in its program sequence.}.
 
           \item \emph{Instruction decode / register fetch cycle} (ID):
 
@@ -163,6 +164,14 @@
           \end{itemize}
 
           In a load-store architecture the effective address and execution cycles can be combined into a single clock cycle, since no instruction needs to do both of them.
+
+          \item \emph{Memory Access} (MEM):
+
+          The memory does a read using the effective address computed in the previous cycle or writes the data read from the register file using the effective address, if the instruction is a load or a store.
+
+          \item \emph{Write-back cycle} (WB):
+
+          For a Register-Register ALU instruction or a load instruction, write the result into the register file.
         \end{enumerate}
 
       \paragraph{Sign Extension} In computer arithmetic, sigh extension is the operation of increasing the number of bits of a binary number while preserving the number's sign and value. This is done by appending digits (same as the sign bit) to the most significant side of the number, following a procedure dependent on the particular signed number representation used.
@@ -173,12 +182,39 @@
           \item ``11 1111 0001'' (decimal negative 15) $\rightarrow$ ``1111 1111 1111 0001''
         \end{itemize}
 
+      \paragraph{Pipelined Implementation\cite{caqa}}
+      Under ideal conditions, we can easily get a pipelined implementation from the execution described above, doing one of the five steps for five instructions in parallel in each pipeline stage. This procedure is showed in the following table.
+      
+      \begin{table}[H]
+      \centering
+      \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+      \hline
+                         & \multicolumn{9}{c|}{Clock Number}               \\ \hline
+      Instruction Number & 1  & 2  & 3  & 4   & 5   & 6   & 7   & 8   & 9  \\ \hline
+      Instruction $i$    & IF & ID & EX & MEM & WB  &     &     &     &    \\ \hline
+      Instruction $i+1$  &    & IF & ID & EX  & MEM & WB  &     &     &    \\ \hline
+      Instruction $i+2$  &    &    & IF & ID  & EX  & MEM & WB  &     &    \\ \hline
+      Instruction $i+3$  &    &    &    & IF  & ID  & EX  & MEM & WB  &    \\ \hline
+      Instruction $i+4$  &    &    &    &     & IF  & ID  & EX  & MEM & WB \\ \hline
+      \end{tabular}
+      \end{table}
 
+    \subsubsection{Pipeline Hazards}
+
+      Hazards prevent the next instruction in the instruction stream from executing during its designated clock cycle. There are three classes of hazards\cite{caqa}:
+      \begin{enumerate}
+        \item \emph{Structural hazards} arise from resource conflicts when the hardware cannot support all possible combinations of instructions simultaneously in overlapped execution.
+        \item \emph{Data hazards} arise when an instruction depends on the results of a previous instrucion in a way that is exposed by the overlapping of instructions in the pipeline.
+        \item \emph{Control hazards} arise from the pipelining of branches and other instructions that change the PC.
+      \end{enumerate}
+
+      These hazards can make it necessary to \emph{stall} the pipeline.
+      
 \begin{thebibliography}{9}
   \bibitem{caqa} 
     John L. Hennessy, David A. Patterson, et al.
     \emph{Computer Architecture: A Quantitative Approach},
-    Fifth Edition, 2012. 
+    Fifth Edition, 2012.
 \end{thebibliography}
 
 \end{document}
