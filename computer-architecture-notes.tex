@@ -97,7 +97,7 @@
 
       \indent 
 
-      Throughput is what matters.
+      Throughput is what matters. Pipelining helps \emph{throughput} of whole workload, while it doesn't help \emph{latency} of single task. 
 
       \begin{itemize}
         \item Unbalanced lengths of pipe stages reduces speedup. 
@@ -204,11 +204,44 @@
       Hazards prevent the next instruction in the instruction stream from executing during its designated clock cycle. There are three classes of hazards\cite{caqa}:
       \begin{enumerate}
         \item \emph{Structural hazards} arise from resource conflicts when the hardware cannot support all possible combinations of instructions simultaneously in overlapped execution.
-        \item \emph{Data hazards} arise when an instruction depends on the results of a previous instrucion in a way that is exposed by the overlapping of instructions in the pipeline.
-        \item \emph{Control hazards} arise from the pipelining of branches and other instructions that change the PC.
+        \item \emph{Data hazards} arise when an instruction depends on the results of a previous instrucion still in the pipeline.
+        \item \emph{Control hazards} is caused by delay between the fetching of instruction and decisions about changes in control flow (branches and jumps).
       \end{enumerate}
 
       These hazards can make it necessary to \emph{stall} the pipeline.
+
+      There are three generic data hazards:
+      \begin{itemize}
+        \item Read After Write (RAW):
+
+        $Instr_J$ tries to read oprand before $Instr_I$ writes it.
+        \begin{itemize}
+          \item I: add \textbf{r1}, r2, r3
+          \item J: sub r4, \textbf{r1}, r3
+        \end{itemize}
+
+        \item Write After Read (WAR):
+
+        $Instr_J$ writes oprand before $Instr_I$ reads it.
+        \begin{itemize}
+          \item I: sub r4, \textbf{r1}, r3
+          \item J: add \textbf{r1}, r2, r3
+          \item K: mul r6, r1, r7
+        \end{itemize}
+        This cannot happen in MIPS 5 stage pipeline.
+
+        \item Write After Write (WAW):
+
+        $Instr_J$ writes oprand before $Instr_I$ writes it.
+        \begin{itemize}
+          \item I: sub \textbf{r1}, r4, r3
+          \item J: add \textbf{r1}, r2, r3
+          \item K: mul r6, r1, r7
+        \end{itemize}
+        This cannot happen in MIPS 5 stage pipeline.
+
+
+      \end{itemize}
       
 \begin{thebibliography}{9}
   \bibitem{caqa} 
