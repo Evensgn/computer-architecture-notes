@@ -52,7 +52,7 @@
 \newcommand{\xoneton}{x_1,\,x_2,\,\dots,\,x_n}
 
 
-\title{Lecture Notes of Computer Architecture}
+\title{Lecture Notes of Computer Architecture\\\begin{large}(Lecturer \ A-Lei Liang)\end{large}}
 \author{Zhou Fan\\ACM Class, Shanghai Jiao Tong University}
 \date{}
 
@@ -199,7 +199,8 @@
       \end{tabular}
       \end{table}
 
-    \subsubsection{Pipeline Hazards}
+  \subsection{Pipeline Hazards}
+    \subsubsection{Three Classes of Hazards}
 
       Hazards prevent the next instruction in the instruction stream from executing during its designated clock cycle. There are three classes of hazards\cite{caqa}:
       \begin{enumerate}
@@ -210,7 +211,7 @@
 
       These hazards can make it necessary to \emph{stall} the pipeline.
 
-      There are three generic data hazards:
+      There are three generic data hazards\cite{ppt}:
       \begin{itemize}
         \item Read After Write (RAW):
 
@@ -240,14 +241,49 @@
         \end{itemize}
         This cannot happen in MIPS 5 stage pipeline.
 
-
       \end{itemize}
-      
+
+    \subsubsection{Solutions to Hazards}
+
+      \paragraph{Forwarding}
+      Some case of data hazards can be avoided using a technique called \emph{forwarding}. Forwarding can be generalized to include passing a result directly to the functional unit that requires it: A result is forwarded from the pipeline register corresponding to the output of one unit to the input of another, or from the result of a unit to the input of the same unit.\cite{caqa}\\
+      However, some data hazards still exists even with forwarding.
+
+      \paragraph{Software Scheduling}
+      Using software to rearrange instructions is a way to avoid load hazards. In the following example, rearrange instruction order, increase the distance between $Instr_I$ and $Instr_J$ to avoid the hazard:\\
+      \begin{itemize}
+        \item I: lw \textbf{r1}, addr
+        \item J: add r3, r2, \textbf{r1}
+      \end{itemize}
+
+      \paragraph{Control Hazards} Alternatives for control hazard\cite{caqa}:
+      \begin{itemize}
+        \item Stall until branch direction is clear
+        \item Predict Branch Not Taken / Branch Taken
+        \item Static Branch Prediction: 
+        use profile information collected from ealier runsm, because an individual branch is often highly biased toward taken or untaken.
+        \item Dynamic Branch Prediction: 
+        predict branches dynamically base on  program behaviour.
+      \end{itemize}
+
+\section{Placeholder}
+Sorry for the blank :-(
+
+\section{Memory Hierarchy Design}
+  \subsection{Memory Technology and Optimizations}
+  	\subsubsection{Main Memory Organizations}
+  		
+
+
 \begin{thebibliography}{9}
   \bibitem{caqa} 
     John L. Hennessy, David A. Patterson, et al.
     \emph{Computer Architecture: A Quantitative Approach},
     Fifth Edition, 2012.
+  \bibitem{ppt}
+    David A. Patterson.
+    PPT of \emph{CS252 Graduate Computer Architecture},
+    2001
 \end{thebibliography}
 
 \end{document}
